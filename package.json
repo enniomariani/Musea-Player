@@ -1,0 +1,45 @@
+{
+  "name": "musea-player",
+  "author": "Ennio Mariani",
+  "email": "mail@enniomariani.ch",
+  "version": "1.0.0",
+  "description": "Play Media-Files and handle DMX-lights. Implements Musea-Server.",
+  "type": "module",
+  "main": "./build/main/main.js",
+  "scripts": {
+    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js ./tests --maxWorkers=50% --coverage",
+    "start": "electron-forge start",
+    "dev": "cross-env NODE_ENV=development npm start",
+    "package": "npm run build && electron-forge package",
+    "clean": "rimraf build/",
+    "copy:assets": "copyfiles -u 1 \"src/**/*.{html,css}\" build",
+    "copy:datafolder": "copyfiles -u 1 daten/**/* build/daten",
+    "copy-files": "npm run copy:assets && npm run copy:datafolder",
+    "build": "npm run clean && tsc -b src/main  && tsc -b src/renderer  && tsc -b src/preload  && tsc-alias --outDir build/ &&  npm run copy-files"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.10.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
+    "@electron-forge/plugin-fuses": "^7.10.2",
+    "@jest/globals": "^30.2.0",
+    "@types/jest": "^30.0.0",
+    "@types/ws": "^8.18.1",
+    "copyfiles": "^2.4.1",
+    "cross-env": "^10.1.0",
+    "electron": "^38.4.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "memfs": "^4.49.0",
+    "mock-fs": "^5.5.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.5",
+    "ts-loader": "^9.5.4",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "jsonschema": "^1.5.0",
+    "musea-server": "^1.0.0"
+  }
+}

@@ -1,0 +1,7 @@
+{
+"Mauszeiger": true,
+"Vollbild": false,
+"COMPortDMXLicht": "",
+"InhaltRotieren180Grad": false,
+"PfadZumHintergrundBild": "bg.png"
+}
