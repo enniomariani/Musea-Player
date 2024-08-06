@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "jest"],
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "rootDir": "../",
+    "paths": {
+      "__mocks__/*": ["tests/__mocks__/*"],
+      "main/*": ["src/main/*"],
+      "renderer/*": ["src/renderer/*"]
+    }
+  }
+}

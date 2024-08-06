@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'none'; script-src 'self' 'unsafe-inline'; connect-src 'self';media-src 'self' file:; img-src 'self' data:; style-src 'self';base-uri 'self';form-action 'self'"/>
+    <meta http-equiv="X-Content-Security-Policy"
+          content="default-src 'none'; script-src 'self' 'unsafe-inline' ; connect-src 'self';media-src 'self' file:; img-src 'self' data:; style-src 'self';base-uri 'self';form-action 'self'"/>
+
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <title>Musea-Player</title>
+    <script type="importmap">
+        {
+          "imports": {
+            "musea-server/renderer": "../node_modules/musea-server/build/musea-server/renderer/index.js"
+          }
+        }
+    </script>
+</head>
+
+<body>
+<div id="content">
+    <div class="contentPart" id="error"></div>
+    <div class="contentPart" id="video-container"></div>
+    <div class="contentPart" id="image-container"></div>
+</div>
+<script src="./renderer/renderer.js" type="module"></script>
+</body>
+</html>
