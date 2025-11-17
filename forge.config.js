@@ -9,6 +9,12 @@ export default {
             "./daten"
         ],
     },
+    makers: [
+        {
+            name: '@electron-forge/maker-zip',
+            platforms: ['win32'],
+        },
+    ],
     publishers: [
         {
             name: '@electron-forge/publisher-github',
