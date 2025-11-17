@@ -24,8 +24,11 @@ jobs:
       
       - name: Build app
         run: npm run build
+
+      - name: Test app
+        run: npm run test
       
-      - name: Test, package and publish
+      - name: publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm test && electron-forge publish
+        run: run publish
