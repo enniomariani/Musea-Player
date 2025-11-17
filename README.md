@@ -2,7 +2,7 @@
 Der Standard-Medienplayer von [Musea](https://github.com/enniomariani/musea). Spielt Videos und Bilder ab und sendet Signale an DMX-Lampen.
 
 ## Start
-1. Programm herunterladen
+1. [Programm herunterladen](https://github.com/enniomariani/Musea-Player/releases)
 1. Einstellungen anpassen (siehe [Einstellungen](#einstellungen))
 1. Firewall-Meldung akzeptieren: <br/><img src="docs/img/firewall-accept.png" alt="Bild Firewall" width="250">
 1. Windows Defender Firewall öffnen → links "erweiterte Einstellungen" anwählen  <br/><img src="docs/img/firewall-open.png" alt="Firewall öffnen" width="450">
