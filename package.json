@@ -21,6 +21,7 @@
     "@electron-forge/cli": "^7.10.2",
     "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
     "@electron-forge/plugin-fuses": "^7.10.2",
+    "@electron-forge/publisher-github": "^7.10.2",
     "@jest/globals": "^30.2.0",
     "@types/jest": "^30.0.0",
     "@types/ws": "^8.18.1",

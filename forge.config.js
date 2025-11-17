@@ -9,6 +9,18 @@ export default {
             "./daten"
         ],
     },
+    publishers: [
+        {
+            name: '@electron-forge/publisher-github',
+            config: {
+                repository: {
+                    owner: 'enniomariani',
+                    name: 'musea-player'
+                },
+                prerelease: true
+            }
+        }
+    ],
     rebuildConfig: {},
     plugins: [
         // Fuses are used to enable/disable various Electron functionality
