@@ -22,7 +22,22 @@ Die Einstellungen werden in der Datei `daten/settings.txt` im JSON-Format gespei
 Wenn die JSON-Datei fehlerhaft ist, werden die Standardwerte verwendet.
 
 ## Update
-**Achtung** - Bei einem Update muss die App eventuell nochmals von Hand in der Firewall freigegeben werden.
+**Vor dem Update**
+- Proramm schliessen
+- Folgende Dateien/Ordner im Ordner ``alter-Programm-Ordner/resources/daten`` sichern (z.B. auf den Desktop kopieren)
+  - Ordner media
+  - Datei ``settings.txt``
+  - Eventuell log-Dateien in logs
+  - Eventuell Hintergrundbild
+ 
+**Update**
+- Neues Programm herunterladen
+- Altes Programm löschen
+
+**Nach dem Update**
+- Alle gesicherten Dateien und Ordner in den Ordner ``resources/daten`` des neuen Programms kopieren (existierende Dateien überschreiben)
+- Neues Programm öffnen
+- Wahrscheinlich muss das geupdatete Programm nochmals in der Firewall freigegeben werden (siehe [Start](#start))
 
 ## Lizenz
 Dieses Projekt steht unter der [GNU General Public License v3.0](LICENSE).
