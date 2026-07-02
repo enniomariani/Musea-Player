@@ -2,7 +2,7 @@
   "name": "musea-player",
   "author": "Ennio Mariani",
   "email": "mail@enniomariani.ch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Play Media-Files and handle DMX-lights. Implements Musea-Server.",
   "type": "module",
   "main": "./build/main/main.js",
@@ -43,6 +43,6 @@
   },
   "dependencies": {
     "jsonschema": "^1.5.0",
-    "musea-server": "^1.0.0"
+    "musea-server": "^1.0.1"
   }
 }

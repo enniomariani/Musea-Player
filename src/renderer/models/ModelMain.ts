@@ -64,7 +64,6 @@ export class ModelMain extends EventTarget {
         this._museaServer.registerSystemCommandCallback(this._onSystemCommandReceived.bind(this));
         this._museaServer.registerAdminAppDisconnectedCallback(this._onAdminAppDisconnected.bind(this));
         await this._museaServer.start(this._globalSettings.pathToDataFolder, {
-            port: 5000,
             lightInitSequence: true
         });
     }
