@@ -9,8 +9,9 @@ export namespace NetworkCommand {
         Stop = "stop",
         Rew = "rew",
         Fwd = "fwd",
-        Sync = "sync",
-        Seek = "seek"
+        Subs = "subs",
+        Seek = "seek",
+        Sync = "sync"
     }
 
     export enum Volume {
@@ -90,6 +91,12 @@ export class ModelMain extends EventTarget {
                     throw new Error("Seek-command needs a following number: " + command);
 
                 this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Seek, false, Number(command[1]), null)
+                break;
+            case   "subs":
+                if(command.length < 2)
+                    this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Subs, false,null, null)
+                else
+                    this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Subs, false, command[1], null)
                 break;
             case   "sync":
                 if(command.length < 2 || isNaN(Number(command[1])))

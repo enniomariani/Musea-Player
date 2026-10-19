@@ -87,6 +87,8 @@ describe("Network-commands ", () => {
             [["rewind"], NetworkCommand.Media.Rew, false, null],
             [["seek", "10"], NetworkCommand.Media.Seek, false, 10],
             [["seek", "0"], NetworkCommand.Media.Seek, false, 0],
+            [["subs"], NetworkCommand.Media.Subs, false, null],
+            [["subs", "deu"], NetworkCommand.Media.Subs, false, "deu"],
             [["sync", "100"], NetworkCommand.Media.Sync, false, 100],
             [["sync", "0"], NetworkCommand.Media.Sync, false, 0],
         ])(
