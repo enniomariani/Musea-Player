@@ -55,7 +55,7 @@ describe("Network-commands ", () => {
 
                 mockModelMain.initFrameWork.mockImplementation((onMediaCommand: IOnMediaCommand, onSystemCommandReceived: IOnSystemCommand,
                                                                 onAdminAppDisconnected: Function) => {
-                    onMediaCommand(command, mediaFileFound, param, mediaType);
+                    onMediaCommand(command, {mediaFound: mediaFileFound, value: param, mediaType: mediaType});
                 })
 
                 await controllerMain.init();
@@ -80,8 +80,8 @@ describe("Network-commands ", () => {
 
                 mockModelMain.initFrameWork.mockImplementation(async (onMediaCommand: IOnMediaCommand, onSystemCommandReceived: IOnSystemCommand,
                                                                       onAdminAppDisconnected: Function) => {
-                    await onMediaCommand(NetworkCommand.Media.Play, true, 10, "mp4");
-                    await onMediaCommand(command, true, param, mediaType);
+                    await onMediaCommand(NetworkCommand.Media.Play, {mediaFound: true, value:10, mediaType:"mp4"});
+                    await onMediaCommand(command, {mediaFound: true, value: param, mediaType: mediaType});
 
                 })
 
@@ -105,8 +105,8 @@ describe("Network-commands ", () => {
 
                 mockModelMain.initFrameWork.mockImplementation(async (onMediaCommand: IOnMediaCommand, onSystemCommandReceived: IOnSystemCommand,
                                                                       onAdminAppDisconnected: Function) => {
-                    await onMediaCommand(NetworkCommand.Media.Play, true, 10, "jpeg");
-                    await onMediaCommand(command, true, param, mediaType);
+                    await onMediaCommand(NetworkCommand.Media.Play, {mediaFound: true, value: 10, mediaType: "jpeg"});
+                    await onMediaCommand(command, {mediaFound: true, value: param, mediaType: mediaType});
                 });
 
                 await controllerMain.init();
