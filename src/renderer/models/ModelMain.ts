@@ -1,6 +1,7 @@
 import {CreateGlobalSettings} from "renderer/models/globalSettings/CreateGlobalSettings.js";
 import {GlobalSettings} from "renderer/models/globalSettings/GlobalSettings.js";
 import {MuseaServer} from "musea-server/renderer";
+import {ExtractedSub} from "../../shared/types.js";
 
 export namespace NetworkCommand {
     export enum Media {
@@ -77,8 +78,8 @@ export class ModelMain extends EventTarget {
         });
     }
 
-    async getSubsForFile(){
-        console.log(await this._backend.extractSubsForFile(this._globalSettings.pathToDataFolder + "media\\0.mp4"));
+    async getSubsForFile(filePath:string):Promise<ExtractedSub[]>{
+        return await this._backend.extractSubsForFile(filePath);
     }
 
     private _onMediaCommandReceived(ip: string, command: string[]): void {

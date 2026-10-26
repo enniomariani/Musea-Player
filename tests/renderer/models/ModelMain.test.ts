@@ -1,6 +1,5 @@
 import {beforeEach, describe, expect, it, jest} from "@jest/globals";
 import {
-    IMediaParameter,
     IOnMediaCommand,
     IOnSystemCommand,
     ModelMain,
@@ -11,17 +10,21 @@ import {GlobalSettings} from "renderer/models/globalSettings/GlobalSettings.js";
 import {MockMuseaServer} from "musea-server/mocks";
 import {IMediaCommandReceived, MuseaServer} from "musea-server/renderer";
 import {ISystemCommandReceived} from "musea-server/renderer";
+import {ExtractedSub} from "shared/types.js";
 
 let globalSettings: GlobalSettings;
 let mockCreateGlobalSettings: MockCreateGlobalSettings;
 let mockMuseaServer: MockMuseaServer;
 let modelMain: ModelMain;
+// @ts-ignore
+let mockBackend:IBackend;
 
 beforeEach(() => {
     globalSettings = new GlobalSettings();
     mockCreateGlobalSettings = new MockCreateGlobalSettings();
     mockMuseaServer = new MockMuseaServer();
-    modelMain = new ModelMain(mockCreateGlobalSettings, globalSettings, mockMuseaServer as any as MuseaServer)
+    mockBackend = jest.fn();
+    modelMain = new ModelMain(mockCreateGlobalSettings, globalSettings,mockBackend, mockMuseaServer as any as MuseaServer)
 });
 
 describe("loadSettings() ", () => {
@@ -40,6 +43,20 @@ describe("loadSettings() ", () => {
 
         await modelMain.loadSettings();
         expect(logSpy).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe("getSubsForFile() ", () => {
+    it("should return the result of backend.extractSubsForFile() ", async () => {
+        const path:string ="path-to-file";
+        const resultArr:ExtractedSub[] = [{lang:"deu", vtt:"vtt"}, {lang:"eng", vtt:"vtt-eng"}];
+
+        mockBackend.extractSubsForFile = jest.fn();
+        mockBackend.extractSubsForFile.mockImplementation((passedPath:string) =>{
+            if(passedPath === path)
+                return resultArr;
+        });
+        expect(await modelMain.getSubsForFile(path)).toEqual(resultArr);
     });
 });
 

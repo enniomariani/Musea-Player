@@ -7,6 +7,7 @@ import {MuseaServer} from "musea-server/renderer";
 export class MockModelMain extends ModelMain {
     loadSettings: jest.Mock;
     initFrameWork: jest.Mock;
+    getSubsForFile: jest.Mock;
 
     constructor() {
 
@@ -14,5 +15,6 @@ export class MockModelMain extends ModelMain {
 
         this.loadSettings = jest.fn();
         this.initFrameWork = jest.fn();
+        this.getSubsForFile = jest.fn();
     }
 }
