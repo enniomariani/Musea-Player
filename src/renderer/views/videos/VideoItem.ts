@@ -58,6 +58,7 @@ export class VideoItem extends EventTarget {
         this._container.style.opacity = "0";
 
         setTimeout(() => {
+            this._revokeSubUrl();
             this._container.pause();
             this.dispatchEvent(new Event(VideoItem.EVENT_VIDEO_FADED_OUT));
         }, this._fadeTimeSec * 1000);

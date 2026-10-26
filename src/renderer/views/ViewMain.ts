@@ -66,6 +66,10 @@ export class ViewMain {
         this._videoView?.showSubs(vtt);
     }
 
+    deactivateSubs():void{
+        this._videoView?.hideSubs();
+    }
+
     setSubs(subs:ExtractedSub[]):void{
         this._allSubs = subs;
     }
