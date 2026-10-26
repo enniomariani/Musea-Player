@@ -83,6 +83,10 @@ export class VideoItem extends EventTarget {
         this._subTracks.track.mode = 'showing';
     }
 
+    hideSubs():void{
+        this._subTracks.track.mode = 'disabled';
+    }
+
     private _revokeSubUrl(): void {
         if (this._subUrl) {
             URL.revokeObjectURL(this._subUrl);

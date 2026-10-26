@@ -77,6 +77,10 @@ export class VideoView implements IPlayableMediaView {
         this._activeVideo?.showSubs(vtt);
     }
 
+    hideSubs():void{
+        this._activeVideo?.hideSubs();
+    }
+
     pause(): void {
         if (!this._activeVideo)
             return;

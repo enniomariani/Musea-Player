@@ -137,7 +137,7 @@ describe('VideoItem Class', () => {
         expect((trackEl as any).track.mode).toBe('showing');
     });
 
-    test('showSubs revokes the previous blob url', () => {
+    it('showSubs revokes the previous blob url', () => {
         URL.createObjectURL = jest.fn()
             .mockReturnValueOnce('blob:one')
             .mockReturnValueOnce('blob:two');
@@ -155,6 +155,19 @@ describe('VideoItem Class', () => {
 
         expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1);
         expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:one');
+    });
+
+    it('hideSubs revokes the previous blob url', () => {
+        const trackEl = (mockContainer.appendChild as jest.Mock).mock.calls[0][0] as HTMLTrackElement;
+
+        // jsdom has no HTMLTrackElement.track: add the stand-in to this item's track
+        Object.defineProperty((videoItem as any)._subTracks, 'track', {
+            value: { mode: 'showing' },
+        });
+
+        videoItem.hideSubs();
+
+        expect((trackEl as any).track.mode).toBe('disabled');
     });
 
     it('should not play if the video has ended', async () => {
