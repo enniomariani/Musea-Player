@@ -69,8 +69,8 @@ export class VideoItem extends EventTarget {
 
     setSubTitles(vtt:string):void{
         const url = URL.createObjectURL(new Blob([vtt], { type: 'text/vtt' }));
-
         const t = document.createElement('track');
+
         Object.assign(t, { kind: 'subtitles', src: url });
         this._container.appendChild(t);
         t.track.mode = 'showing';
