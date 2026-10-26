@@ -61,17 +61,19 @@ export class ViewMain {
         await this._videoView?.play();
     }
 
+    setSubs(subs:ExtractedSub[]):void{
+        this._allSubs = subs;
+    }
+
     activateSub(lang:string):void{
-        const {vtt} = this._allSubs.find( (sub) => {return sub.lang === lang})!;
-        this._videoView?.showSubs(vtt);
+        const extractedSub:ExtractedSub | undefined = this._allSubs.find( (sub) => {return sub.lang === lang});
+
+        if(extractedSub)
+            this._videoView?.showSubs(extractedSub.vtt);
     }
 
     deactivateSubs():void{
         this._videoView?.hideSubs();
-    }
-
-    setSubs(subs:ExtractedSub[]):void{
-        this._allSubs = subs;
     }
 
     stopVideo(): void {

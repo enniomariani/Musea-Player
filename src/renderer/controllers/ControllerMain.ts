@@ -92,8 +92,14 @@ export class ControllerMain {
             this._stopActualMedia();
             this._viewMain.showImage(this._modelMain.globalSettings.pathToDataFolder + "media\\" + fileName);
         } else if (mediaType === "mp4") {
+            const filePath:string = this._modelMain.globalSettings.pathToDataFolder + "media\\" + fileName;
+
             this._stopActualMedia();
-            await this._viewMain.playVideo(this._modelMain.globalSettings.pathToDataFolder + "media\\" + fileName);
+
+            const subs:ExtractedSub[] = await this._modelMain.getSubsForFile(filePath);
+            this._viewMain.setSubs(subs);
+
+            await this._viewMain.playVideo(filePath);
             this._viewMain.unmute();
         } else
             throw new Error("Unknown media-Type: " + mediaType)
