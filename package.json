@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "jsonschema": "^1.5.0",
+    "mp4box": "^2.4.1",
     "musea-server": "^1.0.2"
   }
 }

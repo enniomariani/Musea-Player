@@ -1,4 +1,4 @@
-import {app, BrowserWindow} from 'electron';
+import {app, BrowserWindow, ipcMain} from 'electron';
 import { fileURLToPath } from 'url';
 import { dirname, join} from 'path';
 
@@ -6,6 +6,7 @@ import {CreateWindow} from "main/CreateWindow.js";
 import {GlobalSettingsFactory} from "main/globalSettings/GlobalSettingsFactory.js";
 import {InitSettings} from "main/globalSettings/InitSettings.js";
 import { MuseaServerMain } from "musea-server/main";
+import IpcMainInvokeEvent = Electron.Main.IpcMainInvokeEvent;
 
 /**
  * the main.ts is loaded by electron and has access to file-system, etc.
@@ -47,6 +48,12 @@ app.whenReady().then(async ():Promise<void> => {
     await museaServerMain.init(allSettingsByName[GlobalSettingsFactory.DMX_COM_PORT] === ""?null: allSettingsByName[GlobalSettingsFactory.DMX_COM_PORT]);
 
     await mainWindow.loadFile(join(__dirname, '../index.html'));
+
+    ipcMain.handle('app:extract-subs', (event:IpcMainInvokeEvent, filePath:string) => {
+        console.log("Main: extract subs for: ", filePath);
+
+        return [];
+    });
 
     if(environment === 'development')
         mainWindow.webContents.openDevTools();

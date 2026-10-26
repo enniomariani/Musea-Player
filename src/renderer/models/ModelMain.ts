@@ -40,16 +40,18 @@ export class ModelMain extends EventTarget {
     private _createGlobalSettings: CreateGlobalSettings;
 
     private _museaServer: MuseaServer;
+    private _backend:IBackend;
 
     private _onMediaCommandReceivedCallback: IOnMediaCommand | null = null;
     private _onSystemCommandReceivedCallback: IOnSystemCommand | null = null;
     private _onAdminAppDisconnectedCallback: Function | null = null;
 
-    constructor(createGlobalSettings: CreateGlobalSettings, globalSettings: GlobalSettings, museaServer: MuseaServer = new MuseaServer()) {
+    constructor(createGlobalSettings: CreateGlobalSettings, globalSettings: GlobalSettings, backend:IBackend = window.backend, museaServer: MuseaServer = new MuseaServer()) {
         super();
         this._globalSettings = globalSettings;
         this._createGlobalSettings = createGlobalSettings;
         this._museaServer = museaServer;
+        this._backend = backend;
     }
 
     async loadSettings() {
@@ -73,6 +75,10 @@ export class ModelMain extends EventTarget {
         await this._museaServer.start(this._globalSettings.pathToDataFolder, {
             lightInitSequence: true
         });
+    }
+
+    async getSubsForFile(){
+        console.log(this._backend.extractSubsForFile(this._globalSettings.pathToDataFolder + "media\\0.mp4"));
     }
 
     private _onMediaCommandReceived(ip: string, command: string[]): void {

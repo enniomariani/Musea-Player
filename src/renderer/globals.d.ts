@@ -7,6 +7,7 @@ declare global {
 
     interface IBackend {
         loadSettings():IBackendData;
+        extractSubsForFile(filePath:string):[];
     }
 
     interface IBackendData{
