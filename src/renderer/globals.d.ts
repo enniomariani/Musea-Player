@@ -1,3 +1,5 @@
+import {ExtractedSub} from "../shared/types.js";
+
 export {};
 
 declare global {
@@ -7,7 +9,7 @@ declare global {
 
     interface IBackend {
         loadSettings():Promise<IBackendData>;
-        extractSubsForFile(filePath:string):Promise<[]>;
+        extractSubsForFile(filePath:string):Promise<ExtractedSub[]>;
     }
 
     interface IBackendData{

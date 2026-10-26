@@ -1,0 +1,1 @@
+export interface ExtractedSub { lang: string; vtt: string }
