@@ -67,6 +67,15 @@ export class VideoItem extends EventTarget {
         this._container.volume = Math.min(Math.max(newVolume, 0), 1);
     }
 
+    setSubTitles(vtt:string):void{
+        const url = URL.createObjectURL(new Blob([vtt], { type: 'text/vtt' }));
+
+        const t = document.createElement('track');
+        Object.assign(t, { kind: 'subtitles', src: url });
+        this._container.appendChild(t);
+        t.track.mode = 'showing';
+    }
+
     private _onVideoEnded = (): void => {
         this._container.removeEventListener('ended', this._onVideoEndedFunc);
         this._videoEnded = true;

@@ -12,4 +12,5 @@ interface IPlayableMediaView extends IMediaView {
     mute(): void;
     unmute():void;
     setVolume(volume: number): void;
+    showSubs(lang:string):void;
 }

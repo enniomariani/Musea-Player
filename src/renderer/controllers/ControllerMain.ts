@@ -2,6 +2,7 @@ import {IMediaParameter, ModelMain, NetworkCommand} from "renderer/models/ModelM
 import {CreateGlobalSettings} from "renderer/models/globalSettings/CreateGlobalSettings.js";
 import {ViewMain} from "renderer/views/ViewMain.js";
 import {GlobalSettings} from "renderer/models/globalSettings/GlobalSettings.js";
+import {ExtractedSub} from "../../shared/types.js";
 
 export class ControllerMain {
     private _modelMain: ModelMain;
@@ -21,8 +22,10 @@ export class ControllerMain {
         this._viewMain.init(1, this._modelMain.globalSettings.pathToDataFolder, this._modelMain.globalSettings.bgImageName);
 
         //to do: remove, it is only for testing
+        const subs:ExtractedSub[] = await this._modelMain.getSubsForFile(this._modelMain.globalSettings.pathToDataFolder + "media\\0.mp4");
         await this._viewMain.playVideo(this._modelMain.globalSettings.pathToDataFolder + "media\\0.mp4");
-        await this._modelMain.getSubsForFile();
+        this._viewMain.setSubs(subs);
+        this._viewMain.activateSub("deu");
     }
 
     private _systemCommandReceived(command: NetworkCommand.Volume, parameter: number | null): void {

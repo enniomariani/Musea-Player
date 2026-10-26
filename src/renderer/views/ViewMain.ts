@@ -1,5 +1,6 @@
 import {ImageView} from "renderer/views/images/ImageView.js";
 import {VideoView} from "renderer/views/videos/VideoView.js";
+import {ExtractedSub} from "../../shared/types.js";
 
 export class ViewMain {
 
@@ -9,6 +10,8 @@ export class ViewMain {
 
     private _imageView:IMediaView | null = null;
     private _videoView:IPlayableMediaView | null = null;
+
+    private _allSubs:ExtractedSub[] = [];
 
     constructor() {}
 
@@ -56,6 +59,15 @@ export class ViewMain {
             this._videoView?.show(videoFilePath);
 
         await this._videoView?.play();
+    }
+
+    activateSub(lang:string):void{
+        const {vtt} = this._allSubs.find( (sub) => {return sub.lang === lang})!;
+        this._videoView?.showSubs(vtt);
+    }
+
+    setSubs(subs:ExtractedSub[]):void{
+        this._allSubs = subs;
     }
 
     stopVideo(): void {
