@@ -13,11 +13,15 @@
     "noUnusedParameters": false,
     "sourceMap": true,
 
+    "rootDir": "src",
+    "outDir": "build",
+
     "baseUrl": ".",
     "paths": {
       "main/*": ["src/main/*"],
       "renderer/*": ["src/renderer/*"]
     }
   },
-  "include": ["src/**/*.ts","src/renderer/global.d.ts", "tests/**/*.ts"],
+  "include": ["src/renderer/global.d.ts", "tests/**/*.ts"],
+  "references": [{ "path": "src/shared" }]
 }

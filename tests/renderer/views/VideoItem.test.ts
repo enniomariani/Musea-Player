@@ -29,6 +29,8 @@ describe('VideoItem Class', () => {
             classList: mockClassList,
             pause: jest.fn(),
             play: jest.fn(),
+            appendChild: jest.fn(),
+            querySelector: jest.fn(),
             currentTime: 0,
             playbackRate: 1,
             muted: false,
@@ -102,6 +104,70 @@ describe('VideoItem Class', () => {
     it('should play the video', async () => {
         await videoItem.play();
         expect(mockContainer.play).toHaveBeenCalled();
+    });
+
+    it('should show subs', async () => {
+        URL.createObjectURL = jest.fn(() => 'blob:fake-url');   // jsdom has no createObjectURL
+
+        // the track element the class appended to the container
+        const trackEl = (mockContainer.appendChild as jest.Mock).mock.calls[0][0] as HTMLTrackElement;
+
+        // jsdom has no HTMLTrackElement.track: provide a minimal stand-in
+        Object.defineProperty(trackEl, 'track', { value: { mode: 'disabled' } });
+
+        const vtt = 'WEBVTT\n\n00:00:01.000 --> 00:00:02.000\nHallo';
+        videoItem.showSubs(vtt);
+
+        // 1. the track uses the url that createObjectURL returned
+        expect(trackEl.getAttribute('src')).toBe('blob:fake-url');
+
+        // 2. the blob has the right type and contains exactly the passed string
+        const blob = (URL.createObjectURL as jest.Mock).mock.calls[0][0] as Blob;
+        expect(blob.type).toBe('text/vtt');
+
+        const text = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsText(blob);
+        });
+        expect(text).toBe(vtt);
+
+        // 3. the track is switched on
+        expect((trackEl as any).track.mode).toBe('showing');
+    });
+
+    it('showSubs revokes the previous blob url', () => {
+        URL.createObjectURL = jest.fn()
+            .mockReturnValueOnce('blob:one')
+            .mockReturnValueOnce('blob:two');
+        URL.revokeObjectURL = jest.fn();
+
+        const item = new VideoItem('test.mp4', 1, mockContainer);
+
+        // jsdom has no HTMLTrackElement.track: add the stand-in to this item's track
+        Object.defineProperty((item as any)._subTracks, 'track', {
+            value: { mode: 'disabled' },
+        });
+
+        item.showSubs('WEBVTT\n\n');
+        item.showSubs('WEBVTT\n\n');
+
+        expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1);
+        expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:one');
+    });
+
+    it('hideSubs revokes the previous blob url', () => {
+        const trackEl = (mockContainer.appendChild as jest.Mock).mock.calls[0][0] as HTMLTrackElement;
+
+        // jsdom has no HTMLTrackElement.track: add the stand-in to this item's track
+        Object.defineProperty((videoItem as any)._subTracks, 'track', {
+            value: { mode: 'showing' },
+        });
+
+        videoItem.hideSubs();
+
+        expect((trackEl as any).track.mode).toBe('disabled');
     });
 
     it('should not play if the video has ended', async () => {

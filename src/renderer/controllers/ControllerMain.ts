@@ -1,7 +1,8 @@
-import {ModelMain, NetworkCommand} from "renderer/models/ModelMain.js";
+import {IMediaParameter, ModelMain, NetworkCommand} from "renderer/models/ModelMain.js";
 import {CreateGlobalSettings} from "renderer/models/globalSettings/CreateGlobalSettings.js";
 import {ViewMain} from "renderer/views/ViewMain.js";
 import {GlobalSettings} from "renderer/models/globalSettings/GlobalSettings.js";
+import {ExtractedSub} from "../../shared/types.js";
 
 export class ControllerMain {
     private _modelMain: ModelMain;
@@ -19,6 +20,12 @@ export class ControllerMain {
         await this._modelMain.initFrameWork(this._mediaCommandReceived.bind(this), this._systemCommandReceived.bind(this), this._onAdminAppDisconnected.bind(this));
 
         this._viewMain.init(1, this._modelMain.globalSettings.pathToDataFolder, this._modelMain.globalSettings.bgImageName);
+
+        //to do: remove, it is only for testing
+        const subs:ExtractedSub[] = await this._modelMain.getSubsForFile(this._modelMain.globalSettings.pathToDataFolder + "media\\1.mp4");
+        await this._viewMain.playVideo(this._modelMain.globalSettings.pathToDataFolder + "media\\1.mp4");
+        this._viewMain.setSubs(subs);
+        this._viewMain.activateSub("deu");
     }
 
     private _systemCommandReceived(command: NetworkCommand.Volume, parameter: number | null): void {
@@ -38,10 +45,10 @@ export class ControllerMain {
         }
     }
 
-    private async _mediaCommandReceived(command: NetworkCommand.Media, mediaFound: boolean, parameter: any, mediaType: string | null): Promise<void> {
+    private async _mediaCommandReceived(command: NetworkCommand.Media, parameter?:IMediaParameter): Promise<void> {
         switch (command) {
             case NetworkCommand.Media.Play:
-                await this._handlePlayCommand(mediaFound, parameter, mediaType);
+                await this._handlePlayCommand(parameter!.mediaFound as boolean, parameter!.value as string, parameter!.mediaType!);
                 break;
             case NetworkCommand.Media.Pause:
                 if (this._isPlayingVideo())
@@ -56,12 +63,18 @@ export class ControllerMain {
                     this._viewMain.rewindVideo();
                 break;
             case NetworkCommand.Media.Seek:
-                if (this._isPlayingVideo() && parameter >= 0)
-                    this._viewMain.seek(parameter, true);
+                if (this._isPlayingVideo() && parameter!.value >= 0)
+                    this._viewMain.seek(parameter!.value as number, true);
                 break;
             case NetworkCommand.Media.Sync:
                 if (this._isPlayingVideo())
-                    this._viewMain.seek(parameter / 1000, false);
+                    this._viewMain.seek(parameter!.value as number / 1000, false);
+                break;
+            case NetworkCommand.Media.Subs:
+                if(parameter!.value !== null)
+                    this._viewMain.activateSub(parameter!.value)
+                else
+                    this._viewMain.deactivateSubs();
                 break;
             case NetworkCommand.Media.Stop:
                 this._stopActualMedia();
@@ -69,24 +82,30 @@ export class ControllerMain {
         }
     }
 
-    private async _handlePlayCommand(mediaFound: boolean, parameter: any, mediaType: string | null): Promise<void> {
+    private async _handlePlayCommand(mediaFound: boolean, fileName: string | undefined, mediaType: string | null): Promise<void> {
         if (!mediaFound) {
             this._actualShownMediaType = null;
-            this._viewMain.showError("Bild oder Video ist nicht vorhanden in dieser Medien-App: " + parameter);
+            this._viewMain.showError("Bild oder Video ist nicht vorhanden in dieser Medien-App: " + fileName);
             return;
         }
 
-        if (!parameter) {
+        if (!fileName) {
             await this._viewMain.playVideo(null);
             return;
         }
 
         if (mediaType === "jpeg" || mediaType === "png") {
             this._stopActualMedia();
-            this._viewMain.showImage(this._modelMain.globalSettings.pathToDataFolder + "media\\" + parameter);
+            this._viewMain.showImage(this._modelMain.globalSettings.pathToDataFolder + "media\\" + fileName);
         } else if (mediaType === "mp4") {
+            const filePath:string = this._modelMain.globalSettings.pathToDataFolder + "media\\" + fileName;
+
             this._stopActualMedia();
-            await this._viewMain.playVideo(this._modelMain.globalSettings.pathToDataFolder + "media\\" + parameter);
+
+            const subs:ExtractedSub[] = await this._modelMain.getSubsForFile(filePath);
+            this._viewMain.setSubs(subs);
+
+            await this._viewMain.playVideo(filePath);
             this._viewMain.unmute();
         } else
             throw new Error("Unknown media-Type: " + mediaType)

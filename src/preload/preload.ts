@@ -1,6 +1,7 @@
 //the preload-script does NOT SUPPORT ESM!
 
 import {IOnClientConnected, IOnConnectionClosed, IOnDataReceived} from "musea-server/main";
+import {ExtractedSub} from "../shared/types.js";
 const {ipcRenderer, contextBridge} = require('electron');
 
 console.log("Preload-Script starts: ", process.env.NODE_ENV);
@@ -10,7 +11,10 @@ console.log("Preload-Script starts: ", process.env.NODE_ENV);
 //if you include it like this in the renderer.ts: const { backend } = window;, you can use the object ipcRenderer directly
 //more info here: https://chiragagrawal65.medium.com/how-to-import-ipcrenderer-in-renderer-process-component-26fef55fa4b7
 contextBridge.exposeInMainWorld("backend", {
-    loadSettings: () => ipcRenderer.invoke('app:load-settings')
+    loadSettings: () => ipcRenderer.invoke('app:load-settings'),
+    loadTheme: () => ipcRenderer.invoke('app:load-theme'),
+    getResourcePath: (relativePath:string) => ipcRenderer.invoke('app:get-resource-path', relativePath),
+    extractSubsForFile: (filePath:string):Promise<ExtractedSub[]> => ipcRenderer.invoke('app:extract-subs', filePath)
 });
 
 //--- START FOR MUSEA-SERVER ---

@@ -1,6 +1,7 @@
 import {CreateGlobalSettings} from "renderer/models/globalSettings/CreateGlobalSettings.js";
 import {GlobalSettings} from "renderer/models/globalSettings/GlobalSettings.js";
 import {MuseaServer} from "musea-server/renderer";
+import {ExtractedSub} from "../../shared/types.js";
 
 export namespace NetworkCommand {
     export enum Media {
@@ -9,8 +10,9 @@ export namespace NetworkCommand {
         Stop = "stop",
         Rew = "rew",
         Fwd = "fwd",
-        Sync = "sync",
-        Seek = "seek"
+        Subs = "subs",
+        Seek = "seek",
+        Sync = "sync"
     }
 
     export enum Volume {
@@ -20,8 +22,14 @@ export namespace NetworkCommand {
     }
 }
 
+export interface IMediaParameter{
+    mediaFound?: boolean
+    value?: any
+    mediaType?: string | null
+}
+
 export interface IOnMediaCommand {
-    (command: NetworkCommand.Media, mediaFileFound: boolean, parameter: any, mediaType: string | null): void
+    (command: NetworkCommand.Media, parameter?:IMediaParameter): void
 }
 
 export interface IOnSystemCommand {
@@ -33,16 +41,18 @@ export class ModelMain extends EventTarget {
     private _createGlobalSettings: CreateGlobalSettings;
 
     private _museaServer: MuseaServer;
+    private _backend:IBackend;
 
     private _onMediaCommandReceivedCallback: IOnMediaCommand | null = null;
     private _onSystemCommandReceivedCallback: IOnSystemCommand | null = null;
     private _onAdminAppDisconnectedCallback: Function | null = null;
 
-    constructor(createGlobalSettings: CreateGlobalSettings, globalSettings: GlobalSettings, museaServer: MuseaServer = new MuseaServer()) {
+    constructor(createGlobalSettings: CreateGlobalSettings, globalSettings: GlobalSettings, backend:IBackend = window.backend, museaServer: MuseaServer = new MuseaServer()) {
         super();
         this._globalSettings = globalSettings;
         this._createGlobalSettings = createGlobalSettings;
         this._museaServer = museaServer;
+        this._backend = backend;
     }
 
     async loadSettings() {
@@ -68,7 +78,13 @@ export class ModelMain extends EventTarget {
         });
     }
 
+    async getSubsForFile(filePath:string):Promise<ExtractedSub[]>{
+        return await this._backend.extractSubsForFile(filePath);
+    }
+
     private _onMediaCommandReceived(ip: string, command: string[]): void {
+        console.log("MEdia command received!", ...command);
+
         if (!command.length)
             throw new Error("Unknown command received: " + command);
 
@@ -77,28 +93,34 @@ export class ModelMain extends EventTarget {
                 this._handlePlayCommandReceived(command);
                 break;
             case   "pause":
-                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Pause, false, null, null)
+                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Pause)
                 break;
             case   "forward":
-                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Fwd, false, null, null)
+                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Fwd)
                 break;
             case   "rewind":
-                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Rew, false, null, null)
+                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Rew)
                 break;
             case   "seek":
                 if(command.length < 2 || isNaN(Number(command[1])))
                     throw new Error("Seek-command needs a following number: " + command);
 
-                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Seek, false, Number(command[1]), null)
+                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Seek, {value: Number(command[1])})
+                break;
+            case   "subs":
+                if(command.length < 2)
+                    this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Subs)
+                else
+                    this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Subs, {value: command[1]})
                 break;
             case   "sync":
                 if(command.length < 2 || isNaN(Number(command[1])))
                     throw new Error("Sync-command needs a following number: " + command);
 
-                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Sync, false, Number(command[1]), null)
+                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Sync, {value: Number(command[1])})
                 break;
             case   "stop":
-                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Stop, false, null, null)
+                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Stop)
                 break;
             default:
                 throw new Error("Unknown media-command: " + command)
@@ -115,11 +137,11 @@ export class ModelMain extends EventTarget {
             const mediaType: string | null = this._museaServer.getMediaType(Number(command[1]));
 
             if (mediaFileName !== null)
-                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Play, true, mediaFileName, mediaType);
+                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Play, {mediaFound: true, value: mediaFileName, mediaType: mediaType});
             else
-                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Play, false, command[1], null);
+                this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Play, {mediaFound: false, value: command[1], mediaType: null});
         } else
-            this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Play, true, null, null);
+            this._onMediaCommandReceivedCallback!(NetworkCommand.Media.Play, {mediaFound: true, value: null, mediaType: null});
     }
 
     private _onSystemCommandReceived(ip: string, command: string[]): void {

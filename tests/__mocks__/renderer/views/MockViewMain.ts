@@ -14,6 +14,10 @@ export class MockViewMain extends ViewMain {
     rewindVideo: jest.Mock;
     seek: jest.Mock;
 
+    setSubs: jest.Mock;
+    activateSub: jest.Mock;
+    deactivateSubs: jest.Mock;
+
     mute: jest.Mock;
     unmute: jest.Mock;
     setVolume: jest.Mock;
@@ -34,6 +38,10 @@ export class MockViewMain extends ViewMain {
         this.forwardVideo = jest.fn();
         this.rewindVideo = jest.fn();
         this.seek = jest.fn();
+
+        this.setSubs = jest.fn();
+        this.activateSub = jest.fn();
+        this.deactivateSubs = jest.fn();
 
         this.mute = jest.fn();
         this.unmute = jest.fn();
