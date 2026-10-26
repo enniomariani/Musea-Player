@@ -4,8 +4,12 @@ export class VideoItem extends EventTarget {
     public static EVENT_VIDEO_ENDED: string = "videoEnded";
     public static EVENT_VIDEO_FADED_OUT: string = "videoFadedOut";
 
-    private _fadeTimeSec: number;
     private _container: HTMLVideoElement;
+    private _subTracks:HTMLTrackElement;
+
+    private _subUrl:string | null = null;
+
+    private _fadeTimeSec: number;
     private _videoEnded: boolean;
 
     private _rewindIntervalID:number | null = null;
@@ -30,6 +34,10 @@ export class VideoItem extends EventTarget {
         this._container.currentTime = 0;
         this._container.playbackRate = 1;
         this._videoEnded = false;
+
+        this._subTracks = document.createElement('track');
+        this._container.appendChild(this._subTracks);
+        this._subTracks.kind = "subtitles";
 
         this._seekHandler = seekHandler || new VideoSeekHandler(this._container);
     }
@@ -67,15 +75,19 @@ export class VideoItem extends EventTarget {
         this._container.volume = Math.min(Math.max(newVolume, 0), 1);
     }
 
-    setSubTitles(vtt:string):void{
-        const url = URL.createObjectURL(new Blob([vtt], { type: 'text/vtt' }));
-        const t:HTMLTrackElement = document.createElement('track');
+    showSubs(vtt:string):void{
+        this._revokeSubUrl();
+        this._subUrl = URL.createObjectURL(new Blob([vtt], { type: 'text/vtt' }));
 
-        t.kind = "subtitles";
-        t.src = url;
+        this._subTracks.src = this._subUrl;
+        this._subTracks.track.mode = 'showing';
+    }
 
-        this._container.appendChild(t);
-        t.track.mode = 'showing';
+    private _revokeSubUrl(): void {
+        if (this._subUrl) {
+            URL.revokeObjectURL(this._subUrl);
+            this._subUrl = null;
+        }
     }
 
     private _onVideoEnded = (): void => {
