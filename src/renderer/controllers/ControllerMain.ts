@@ -20,6 +20,12 @@ export class ControllerMain {
         await this._modelMain.initFrameWork(this._mediaCommandReceived.bind(this), this._systemCommandReceived.bind(this), this._onAdminAppDisconnected.bind(this));
 
         this._viewMain.init(1, this._modelMain.globalSettings.pathToDataFolder, this._modelMain.globalSettings.bgImageName);
+
+        //to do: remove, it is only for testing
+        const subs:ExtractedSub[] = await this._modelMain.getSubsForFile(this._modelMain.globalSettings.pathToDataFolder + "media\\1.mp4");
+        await this._viewMain.playVideo(this._modelMain.globalSettings.pathToDataFolder + "media\\1.mp4");
+        this._viewMain.setSubs(subs);
+        this._viewMain.activateSub("deu");
     }
 
     private _systemCommandReceived(command: NetworkCommand.Volume, parameter: number | null): void {

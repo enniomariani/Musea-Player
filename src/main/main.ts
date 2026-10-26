@@ -10,6 +10,7 @@ import { MuseaServerMain } from "musea-server/main";
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import {ExtractedSub} from "../shared/types.js";
+import {LoadJSON} from "./LoadJSON.js";
 
 /**
  * the main.ts is loaded by electron and has access to file-system, etc.
@@ -47,6 +48,20 @@ app.whenReady().then(async ():Promise<void> => {
         !allSettingsByName[GlobalSettingsFactory.MOUSE_ENABLED],
         allSettingsByName[GlobalSettingsFactory.ROTATE_CONTENT_180_DEGREES]);
 
+    ipcMain.handle('app:extract-subs', async (event, filePath:string) => {
+        return await extractSubs(filePath);
+    });
+
+    ipcMain.handle('app:get-resource-path', (event:Electron.IpcMainInvokeEvent, relativePath: string) => {
+        console.log("get res-path: ", process.resourcesPath, pathToDataFolder, relativePath)
+        return join(join(pathToDataFolder, ".."), relativePath);
+    });
+
+    ipcMain.handle('app:load-theme', (event, args) => {
+        let loadJSON: LoadJSON = new LoadJSON();
+        return loadJSON.loadJSONSync(join(pathToDataFolder, 'theme', 'theme.json'));
+    });
+
     mainWindow = await createWindow.create(join(__dirname, '../index.html'));
 
     museaServerMain = new MuseaServerMain(pathToDataFolder, mainWindow);
@@ -65,10 +80,6 @@ app.whenReady().then(async ():Promise<void> => {
             app.quit();
         }
     });
-});
-
-ipcMain.handle('app:extract-subs', async (event, filePath:string) => {
-    return await extractSubs(filePath);
 });
 
 async function extractSubs(filePath: string): Promise<ExtractedSub[]> {

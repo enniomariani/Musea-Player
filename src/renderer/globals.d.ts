@@ -9,7 +9,9 @@ declare global {
 
     interface IBackend {
         loadSettings():Promise<IBackendData>;
+        loadTheme():Promise<any|null>;
         extractSubsForFile(filePath:string):Promise<ExtractedSub[]>;
+        getResourcePath(relativePath:string):Promise<string>;
     }
 
     interface IBackendData{
