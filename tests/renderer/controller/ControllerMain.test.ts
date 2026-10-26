@@ -27,9 +27,9 @@ describe("Network-commands ", () => {
             async (networkCommand: NetworkCommand.Volume, param: number | null, getViewMethod: () => Function) => {
                 const viewMethod = getViewMethod();
 
-                mockModelMain.initFrameWork.mockImplementation((onMediaCommand: IOnMediaCommand, onSystemCommandReceived: IOnSystemCommand,
+                mockModelMain.initFrameWork.mockImplementation(async (onMediaCommand: IOnMediaCommand, onSystemCommandReceived: IOnSystemCommand,
                                                                 onAdminAppDisconnected: Function) => {
-                    onSystemCommandReceived(networkCommand, param)
+                    onSystemCommandReceived(networkCommand, param);
                 })
 
                 await controllerMain.init();
@@ -53,7 +53,7 @@ describe("Network-commands ", () => {
             async (command: NetworkCommand.Media, mediaFileFound: boolean, param: any, mediaType: string | null, getViewMethod: () => Function) => {
                 const viewMethod: Function = getViewMethod();
 
-                mockModelMain.initFrameWork.mockImplementation((onMediaCommand: IOnMediaCommand, onSystemCommandReceived: IOnSystemCommand,
+                mockModelMain.initFrameWork.mockImplementation(async (onMediaCommand: IOnMediaCommand, onSystemCommandReceived: IOnSystemCommand,
                                                                 onAdminAppDisconnected: Function) => {
                     onMediaCommand(command, {mediaFound: mediaFileFound, value: param, mediaType: mediaType});
                 })
@@ -73,6 +73,8 @@ describe("Network-commands ", () => {
             [NetworkCommand.Media.Seek, 0, null, () => mockViewMain.seek],
             [NetworkCommand.Media.Sync, 0, null, () => mockViewMain.seek],
             [NetworkCommand.Media.Stop, 0, null, () => mockViewMain.stopVideo],
+            [NetworkCommand.Media.Subs, "eng", null, () => mockViewMain.activateSub],
+            [NetworkCommand.Media.Subs, null, null, () => mockViewMain.deactivateSubs],
         ])(
             "%s should call corresponding view-method with %p",
             async (command: NetworkCommand.Media, param: any, mediaType: string | null, getViewMethod: () => Function) => {
