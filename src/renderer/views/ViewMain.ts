@@ -70,6 +70,8 @@ export class ViewMain {
 
         if(extractedSub)
             this._videoView?.showSubs(extractedSub.vtt);
+        else
+            console.error(`Subs with language ${lang} could not be found in the playing video!`);
     }
 
     deactivateSubs():void{
