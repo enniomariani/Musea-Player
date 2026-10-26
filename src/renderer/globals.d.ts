@@ -6,8 +6,8 @@ declare global {
     }
 
     interface IBackend {
-        loadSettings():IBackendData;
-        extractSubsForFile(filePath:string):[];
+        loadSettings():Promise<IBackendData>;
+        extractSubsForFile(filePath:string):Promise<[]>;
     }
 
     interface IBackendData{

@@ -78,7 +78,7 @@ export class ModelMain extends EventTarget {
     }
 
     async getSubsForFile(){
-        console.log(this._backend.extractSubsForFile(this._globalSettings.pathToDataFolder + "media\\0.mp4"));
+        console.log(await this._backend.extractSubsForFile(this._globalSettings.pathToDataFolder + "media\\0.mp4"));
     }
 
     private _onMediaCommandReceived(ip: string, command: string[]): void {

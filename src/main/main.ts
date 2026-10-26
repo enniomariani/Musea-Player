@@ -8,6 +8,9 @@ import {InitSettings} from "main/globalSettings/InitSettings.js";
 import { MuseaServerMain } from "musea-server/main";
 import IpcMainInvokeEvent = Electron.Main.IpcMainInvokeEvent;
 
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+
 /**
  * the main.ts is loaded by electron and has access to file-system, etc.
  * if a BrowserWindow is created, HTML and js can be loaded in the window (for example the renderer.ts)
@@ -31,6 +34,8 @@ let initSettings:InitSettings = new InitSettings();
 let mainWindow:BrowserWindow | null = null;
 let museaServerMain:MuseaServerMain;
 
+const run = promisify(execFile);
+
 const pathToDataFolder:string = environment === 'development' ? join(__dirname, '..', 'daten\\') :
     join(process.resourcesPath, '\\daten\\');
 
@@ -49,10 +54,38 @@ app.whenReady().then(async ():Promise<void> => {
 
     await mainWindow.loadFile(join(__dirname, '../index.html'));
 
-    ipcMain.handle('app:extract-subs', (event:IpcMainInvokeEvent, filePath:string) => {
-        console.log("Main: extract subs for: ", filePath);
+    ipcMain.handle('app:extract-subs', async (event:IpcMainInvokeEvent, filePath:string) => {
+        let allSubs = [];
 
-        return [];
+        const {stdout:ffprobe, stderr:ffprobeErr} = await run("ffprobe", [
+            '-v', 'error',
+            '-select_streams', 's',
+            '-show_entries', 'stream=index:stream_tags=language',
+            '-of', 'json',
+             filePath,
+        ]);
+
+        const streams = JSON.parse(ffprobe).streams ?? [];
+
+        if(ffprobeErr)
+            console.error("FFprobe-Error: ", ffprobeErr);
+
+        if(streams.length === 0)
+            console.error("No subtitle strings found in: ", filePath);
+
+        for(let i=0; i < streams.length; i++){
+            const { stdout: vtt, stderr:ffmpegErr } = await run("ffmpeg", [
+                '-v', 'error', '-i', filePath,
+                '-map', `0:s:${i}`, '-c:s', 'webvtt', '-f', 'webvtt', 'pipe:1',
+            ], { maxBuffer: 50 * 1024 * 1024, encoding: 'utf8' });
+
+            if(ffmpegErr)
+                console.error("FFmpeg-Error: ", ffmpegErr);
+
+            allSubs.push({lang: streams[i].tags.language, vtt: vtt});
+        }
+
+        return allSubs;
     });
 
     if(environment === 'development')
