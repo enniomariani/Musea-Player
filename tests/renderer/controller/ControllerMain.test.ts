@@ -55,7 +55,7 @@ describe("Network-commands ", () => {
 
                 mockModelMain.initFrameWork.mockImplementation(async (onMediaCommand: IOnMediaCommand, onSystemCommandReceived: IOnSystemCommand,
                                                                 onAdminAppDisconnected: Function) => {
-                    onMediaCommand(command, {mediaFound: mediaFileFound, value: param, mediaType: mediaType});
+                    await onMediaCommand(command, {mediaFound: mediaFileFound, value: param, mediaType: mediaType});
                 })
 
                 await controllerMain.init();
