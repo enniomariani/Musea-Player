@@ -8,6 +8,14 @@ type Theme = {
             style?: string;
             weight?: string;
         };
+        subtitles?: {
+            family?: string;
+            size?: string;
+            color?: string;
+            bgColor?: string;
+            bgTransparency?: string;
+            lineHeight?: string;
+        };
         faces?: Array<{
             src: string;
             family?: string;
@@ -31,6 +39,13 @@ function applyThemeVars(theme: Theme) {
     setVar("--line-height-default", f.default?.lineHeight);
     setVar("--font-style-default", f.default?.style);
     setVar("--font-weight-default", f.default?.weight);
+
+    setVar("--font-family-subs", f.subtitles?.family);
+    setVar("--font-size-subs", f.subtitles?.size);
+    setVar("--font-color-subs", f.subtitles?.color);
+    setVar("--font-bg-color-subs", f.subtitles?.bgColor);
+    setVar("--font-bg-transparency-subs", f.subtitles?.bgTransparency);
+    setVar("--font-line-height-subs", f.subtitles?.lineHeight);
 }
 
 async function loadFontFaces(backend:IBackend, fonts?: Theme["fonts"]) {

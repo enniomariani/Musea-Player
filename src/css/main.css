@@ -5,6 +5,13 @@
     --font-style-default: normal;
     --font-weight-default: 400;
     --line-height-default: 130%;
+
+    --font-family-subs: 'Inter', sans-serif;
+    --font-size-subs: 26px;
+    --font-color-subs: white;
+    --font-bg-color-subs: black;
+    --font-bg-transparency-subs: 0.5;
+    --font-line-height-subs: 2;
 }
 
 * {
@@ -51,7 +58,14 @@ it by 180 degrees (see settings.txt file)*/
 }
 
 video::cue {
-    font-size: 1.5rem;
+    background-color: rgb(from var(--font-bg-color-subs) r g b / var(--font-bg-transparency-subs));
+    outline: 6px solid rgb(from var(--font-bg-color-subs) r g b / var(--font-bg-transparency-subs)); /* same color as background: acts like padding */
+
+    color: var(--font-color-subs);
+    font-family: var(--font-family-subs);
+
+    font-size: var(--font-size-subs);
+    line-height: var(--font-line-height-subs);
 }
 
 .contentPart {
